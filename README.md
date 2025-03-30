@@ -57,12 +57,13 @@ The Estate Auction Platform is a full-stack web application that enables:
 ## Tech Stack
 
 ### Frontend
-- HTML5, CSS3, JavaScript, PHP
+- HTML5, CSS3, JavaScript
 - Socket.io client
 - Leaflet.js for map integration
 
 ### Backend
 - Node.js
+- PHP RESTful API
 - Socket.io for real-time communication
 - Nodemailer for email notifications
 - MySQL database
