@@ -4,7 +4,7 @@ A real-time real estate auction system with live bidding, user management, and p
 
 ## Project Overview
 
-The Estate Auction Platform is a full-stack web application that enables:
+The Property Nest Live Platform is a full-stack web application that enables:
 - Real-time property auctions with live bidding
 - User account creation and management
 - Property listing and detailed viewing
