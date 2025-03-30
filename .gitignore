@@ -1,0 +1,43 @@
+# Node dependencies
+node_modules/
+
+# Platform directories
+/platforms/
+/plugins/
+
+# Compiled output
+/www/
+
+# Logs and databases
+/*.log
+/*.sqlite
+/*.sqlite3
+/*.log.*
+/*.db
+
+# IDEs and editors
+/.idea/
+/.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# Package lock files
+package-lock.json
+yarn.lock
+
+# Cordova generated files
+*.apk
+*.ipa
+*.keystore
+
+# Capacitor generated files
+/android/
+/ios/
+
+# Angular cache
+.angular/

@@ -1,4 +1,4 @@
-# Estate Auction Platform
+# PropertyNestLive Platform
 
 A real-time real estate auction system with live bidding, user management, and property listing capabilities.
 
