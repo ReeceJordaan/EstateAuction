@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Auctions</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/index.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+        <script src="js/index.js" defer></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    </head>
+
+    <body onload="loadAllAuctions()">
+        <div class="loading" style="display: flex;"></div>
+        <div class="navigation" style="display: none;">
+            <div class="nav-element">
+                <img class="logo" src="img/logo2.png" width="200" alt="Logo 2">
+            </div>
+        
+            <div class="nav-element">
+                <button class="tab-button" id="button1" onclick="loadAllAuctions()">Auctions</button>
+            </div>
+        
+            <div class="nav-element">
+                <button class="tab-button" id="button2" onclick="loadMyAuctions()">My Auctions</button>
+            </div>
+        
+            <div class="nav-element">
+                <button class="tab-button" id="button3" onclick="loadMyWins()">My Wins</button>
+            </div>
+
+            <div class="nav-element" id="createBtn" style="display: none;">
+                <button class="tab-button" id="createAuctionBtn">Create Auction</button>
+            </div>
+        
+            <div class="nav-element">
+                <div class="login-register" style="display: none;">
+                    <span class="login-register-element">
+                        <button id="login-button">
+                            <img class="login-register-img" src="img/login.png" alt="Login">
+                            <span class="login-register-text">Login</span>
+                        </button>
+                    </span>
+                </div>
+        
+                <div class="user-info" style="display: none;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 50%; margin-left: 10px; margin-right: 10px; flex-direction: row;">
+                        <div>
+                            <img class="status-img" src="img/disconnected.png" width=30 height=30 alt="Conn Status">
+                        </div>
+
+                        <label class="profile-container" for="fileField" style="cursor: pointer;">
+                            <img class="profile-img" src="img/profile.png" width=50 alt="Profile Picture">
+                            <img class="profle-img-add" src="img/add.png" alt="Add image">
+                        </label>
+                        
+                        <input type="file" id="fileField" name="file" accept="image/*" style="display: none;" onchange="setProfilePicture(event)">
+                    </div>
+        
+                    <div style="align-items: flex-start; width: 50%; margin-left: 10px;">
+                        <div class="username">
+                            User
+                        </div>
+        
+                        <div>
+                            <button class="logout" onclick="logout()">Log out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="popupContainer" style="display: none;">
+            <div id="popupContent">
+                <button id="closePopup">
+                    <img src="img/close.png" width="20" alt="Close">
+                </button>
+        
+                <form id="login-form" style="display: none;" onsubmit="submitLoginForm(event)">
+                    <div class="form-group">
+                        Login
+                    </div>
+        
+                    <hr>
+        
+                    <div class="form-group">
+                        <span style="display: flex; flex-direction: column; align-items: start;">
+                            <label class="formLabel" for="login-email">Email</label>
+                            <input type="email" class="inputField" id="login-email" name="login-email" required>
+                        </span>
+                    </div>
+        
+                    <div class="form-group">
+                        <span style="display: flex; flex-direction: column; align-items: start;">
+                            <label class="formLabel" for="login-password">Password</label>
+                            <input type="password" class="inputField" id="login-password" name="login-password" required>
+                        </span>
+                    </div>
+        
+                    <hr>
+        
+                    <div class="form-group">
+                        <input type="submit" value="Login" class="login-submit">
+                    </div>
+                </form>
+        
+                <form id="createAuctionForm" style="display: none;" onsubmit="createAuction(event)">
+                    <div class="form-group">
+                        Create Auction
+                    </div>
+        
+                    <hr>
+        
+                    <div class="form-group">
+                        <span>
+                            <label class="formLabel" for="createAuctionName">Auction name</label>
+                            <label class="requiredLabel" for="createAuctionName">*</label><br>
+                            <input type="text" class="inputField" id="createAuctionName" name="createAuctionName" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionStart">Auction start time</label>
+                            <label class="requiredLabel" for="createAuctionStart">*</label><br>
+                            <input type="datetime-local" class="inputField" id="createAuctionStart" name="createAuctionStart" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionEnd">Auction end time</label>
+                            <label class="requiredLabel" for="createAuctionEnd">*</label><br>
+                            <input type="datetime-local" class="inputField" id="createAuctionEnd" name="createAuctionEnd" required>
+                        </span>
+                    </div>
+        
+                    <div class="form-group">
+                        <span>
+                            <label class="formLabel" for="createAuctionTitle">Auction title</label>
+                            <label class="requiredLabel" for="createAuctionTitle">*</label><br>
+                            <input type="text" class="inputField" id="createAuctionTitle" name="createAuctionTitle" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionPrice">Auction price</label>
+                            <label class="requiredLabel" for="createAuctionPrice">*</label><br>
+                            <input type="text" class="inputField" id="createAuctionPrice" name="createAuctionPrice" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionLocation">Auction location</label>
+                            <label class="requiredLabel" for="createAuctionLocation">*</label><br>
+                            <input type="text" class="inputField" id="createAuctionLocation" name="createAuctionLocation" required>
+                        </span>
+                    </div>
+        
+                    <div class="form-group">
+                        <span>
+                            <label class="formLabel" for="createAuctionBedrooms">Auction bedrooms</label>
+                            <label class="requiredLabel" for="createAuctionBedrooms">*</label><br>
+                            <input type="number" class="inputField" id="createAuctionBedrooms" name="createAuctionBedrooms" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionBathrooms">Auction bathrooms</label>
+                            <label class="requiredLabel" for="createAuctionBathrooms">*</label><br>
+                            <input type="number" class="inputField" id="createAuctionBathrooms" name="createAuctionBathrooms" required>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionParking">Auction parking</label>
+                            <label class="requiredLabel" for="createAuctionParking">*</label><br>
+                            <input type="number" class="inputField" id="createAuctionParking" name="createAuctionParking" required>
+                        </span>
+                    </div>
+        
+                    <div class="form-group">
+                        <span>
+                            <label class="formLabel" for="createAuctionAmenities1">Auction amenities</label><br>
+                            <span style="display: flex; flex-direction: column;">
+                                <input type="text" class="inputField" id="createAuctionAmenities1" name="createAuctionAmenities1" style="margin-bottom: 5px;" maxlength="30">
+                                <input type="text" class="inputField" id="createAuctionAmenities2" name="createAuctionAmenities2" style="margin-bottom: 5px;" maxlength="30">
+                                <input type="text" class="inputField" id="createAuctionAmenities3" name="createAuctionAmenities3" style="margin-bottom: 5px;" maxlength="30">
+                                <input type="text" class="inputField" id="createAuctionAmenities4" name="createAuctionAmenities4" style="margin-bottom: 5px;" maxlength="30">
+                                <input type="text" class="inputField" id="createAuctionAmenities5" name="createAuctionAmenities5" style="margin-bottom: 5px;" maxlength="30">
+                            </span>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionDesc">Auction description</label>
+                            <label class="requiredLabel" for="createAuctionDesc">*</label><br>
+                            <textarea class="inputField" id="createAuctionDesc" name="createAuctionDesc" style="height: 186px; resize: none;" maxlength="300" required></textarea>
+                        </span>
+        
+                        <span>
+                            <label class="formLabel" for="createAuctionImage">
+                                Auction image<br>
+                                <span class="imageContainer" style="width: 246px; height: 175px; border-radius: 20px; cursor: pointer; border: 2px dashed #ccc; padding: 10px; display: inline-block;" id="dropZone">
+                                    <img class="createAuctionImage" src="img/addimage.png" alt="Add image">
+                                </span>
+                            </label>
+                            <input type="file" class="inputField" id="createAuctionImage" name="createAuctionImage" accept="image/*" style="display: none;" onchange="setAuctionPicture(event)">
+                        </span>
+                    </div>
+        
+                    <hr>
+        
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="createAuctionSubmit">
+                    </div>
+                </form>
+            </div>
+        </div>        
+        <div class="allAuctions" style="display: none;"></div>
+        <div class="myAuctions" style="display: none;"></div>
+        <div class="myWins" style="display: none;"></div>
+        <div class="viewAuction" style="display: none;"></div>
+        <div class="empty" style="display: none;">No auctions found</div>
+        <div class="login-to-view" style="display: none;">Login to view auctions</div>
+    </body>
+</html>
